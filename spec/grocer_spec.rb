@@ -1,3 +1,5 @@
+require 'pry'
+
 describe "Grocer" do
   let(:items) do
     [
@@ -103,6 +105,7 @@ describe "Grocer" do
         consolidated_cart = consolidate_cart(cart: cart)
 
         irrelevant = apply_coupons(cart: consolidated_cart, coupons: [find_coupon("AVOCADO")])
+        #binding.pry
         expect(irrelevant["CHEESE"][:price]).to eq(6.50)
         expect(irrelevant["CHEESE"][:count]).to eq(2)  
         expect(irrelevant.keys).to_not include("AVOCADO W/COUPON")
@@ -191,6 +194,7 @@ describe "Grocer" do
 
         expect(self).to receive(:consolidate_cart).with(cart: cart).and_return(consolidated)
         expect(self).to receive(:apply_coupons).with(cart: consolidated, coupons: []).and_return(coupons_applied)
+        binding.pry
 
         expect(checkout(cart: cart, coupons: [])).to eq(2.50)
       end
@@ -266,6 +270,7 @@ describe "Grocer" do
         cheese = find_item('CHEESE')
         cart = Array.new(3, cheese)
         coupons = [find_coupon("CHEESE")]
+        #binding.pry
         expect(checkout(cart: cart, coupons: coupons)).to eq(15.00)
       end
 
@@ -288,6 +293,7 @@ describe "Grocer" do
         cart = Array.new(3, beer)
         beer_coupon = find_coupon("BEER")
         coupons = [beer_coupon, beer_coupon]
+        #binding.pry
         expect(checkout(cart: cart, coupons: coupons)).to eq(33.00)
       end
     end

@@ -1,15 +1,52 @@
+require 'pry'
+
 def consolidate_cart(cart:[])
-  # code here
+  cart.each_with_object({}) do |each_cart, new_cart|
+    each_cart.each do |item, info|
+      new_cart[item] ||= info
+      new_cart[item][:count] ||= 0
+      new_cart[item][:count] += 1
+    end
+  end
 end
 
 def apply_coupons(cart:[], coupons:[])
-  # code here
+  coupons.each do |coupon|
+    if cart[coupon[:item]] and cart[coupon[:item]][:count] >= coupon[:num]
+      cart[coupon[:item]][:count] -= coupon[:num]
+      cart["#{coupon[:item]} W/COUPON"] ||= {
+        price: coupon[:cost],
+        clearance: cart[coupon[:item]][:clearance],
+        count: 0
+      }
+      cart["#{coupon[:item]} W/COUPON"][:count] += 1
+    end
+  end
+  cart
 end
 
 def apply_clearance(cart:[])
-  # code here
+  cart.each do |item, info|
+    if info[:clearance]
+      cart[item][:price] = (cart[item][:price] * 0.8).round(1)
+    end
+  end
 end
 
-def checkout(cart: [], coupons: [])
-  # code here
+def checkout(cart:[], coupons:[])
+  final_cart = consolidate_cart(cart: cart)
+  final_cart = apply_coupons(cart: final_cart, coupons: coupons)
+  final_cart = apply_clearance(cart: final_cart)
+  total_cost = 0
+  final_cart.each do |item, info|
+    if info[:count] == 0
+      final_cart.delete(item)
+    else
+      total_cost += (info[:price] * info[:count])
+    end
+  end
+  if total_cost > 100
+    total_cost = (total_cost * 0.9).round(1)
+  end
+  return total_cost
 end
