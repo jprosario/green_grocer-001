@@ -39,14 +39,8 @@ def checkout(cart:[], coupons:[])
   final_cart = apply_clearance(cart: final_cart)
   total_cost = 0
   final_cart.each do |item, info|
-    if info[:count] == 0
-      final_cart.delete(item)
-    else
-      total_cost += (info[:price] * info[:count])
-    end
+    total_cost += (info[:price] * info[:count])
   end
-  if total_cost > 100
-    total_cost = (total_cost * 0.9).round(1)
-  end
+  total_cost = (total_cost * 0.9).round(1) if total_cost > 100
   return total_cost
 end
